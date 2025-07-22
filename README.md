@@ -1,12 +1,60 @@
-# Covid-19 India Portal
+# 🛡️ COVID-19 India Portal API
 
-Given two files `app.js` and a database file `covid19IndiaPortal.db` consisting of three tables `state`, `district` and `user`.
+A secure RESTful API built with **Node.js**, **Express**, and **SQLite** to manage and track COVID-19 cases across Indian states and districts.
 
-Write APIs to perform operations on the tables `state`, `district` only after authentication of the user.
+This backend system enables authenticated users to perform CRUD operations on states and districts, ensuring reliable and structured pandemic data management.
 
-The columns of the tables are given below,
+---
 
-**State Table**
+## 🔍 Project Overview
+
+This project simulates a real-world health monitoring API where user authentication, data security, and structured access to health statistics are critical.
+
+The API performs:
+
+- **Authentication** using JWT and bcrypt
+- **CRUD operations** on state and district data
+- **Statistical aggregation** of COVID cases for each state
+
+It follows a **modular and REST-compliant architecture**, ideal for integration with dashboards or frontend systems.
+
+---
+
+## 🚀 Features
+
+- ✅ Secure login with hashed passwords
+- 🔐 JWT-based authentication middleware
+- 📄 RESTful APIs for all state & district operations
+- 📊 Aggregated COVID statistics by state
+- 🧪 Follows best practices for backend API development
+
+---
+
+## 🛠️ Technologies Used
+
+| Technology   | Purpose                         |
+|--------------|----------------------------------|
+| Node.js      | Runtime environment              |
+| Express.js   | Web framework                    |
+| SQLite       | Lightweight relational database  |
+| bcrypt       | Password hashing                 |
+| JSON Web Token (JWT) | Token-based authentication |
+| Postman/ThunderClient | API testing & debugging  |
+
+---
+
+## 🔒 Security & Auth Flow
+
+- Passwords are **hashed using bcrypt**
+- JWT is used for **stateless session management**
+- All routes (except `/login`) are **protected using middleware**
+- Unauthorized access returns `401 Invalid JWT Token`
+
+---
+
+## 🧱 Database Schema
+
+### **State Table**
 
 | Columns    | Type    |
 | ---------- | ------- |
@@ -14,7 +62,7 @@ The columns of the tables are given below,
 | state_name | TEXT    |
 | population | INTEGER |
 
-**District Table**
+### **District Table**
 
 | Columns       | Type    |
 | ------------- | ------- |
@@ -26,158 +74,87 @@ The columns of the tables are given below,
 | active        | INTEGER |
 | deaths        | INTEGER |
 
-You can use your previous code if required.
+---
 
-#### Sample Valid User Credentials
+## 📲 Sample User Credentials
 
-```
+```json
 {
   "username": "christopher_phillips",
   "password": "christy@123"
 }
 ```
 
-### API 1
+---
 
-#### Path: `/login/`
+## 🔐 Authentication with Token
 
-#### Method: `POST`
-
-**Request**
+**Request header format:**
 
 ```
+Authorization: Bearer <jwt_token>
+```
+
+**Invalid token or no token:**
+
+- Status: `401`
+- Response: `"Invalid JWT Token"`
+
+---
+
+## 📡 API Endpoints
+
+### API 1 - Login
+
+- **POST** `/login/`
+
+Request:
+```json
 {
   "username": "christopher_phillips",
   "password": "christy@123"
 }
 ```
 
-- **Scenario 1**
-
-  - **Description**:
-
-    If an unregistered user tries to login
-
-  - **Response**
-    - **Status code**
-      ```
-      400
-      ```
-    - **Body**
-      ```
-      Invalid user
-      ```
-
-- **Scenario 2**
-
-  - **Description**:
-
-    If the user provides an incorrect password
-
-  - **Response**
-    - **Status code**
-      ```
-      400
-      ```
-    - **Body**
-      ```
-      Invalid password
-      ```
-
-- **Scenario 3**
-
-  - **Description**:
-
-    Successful login of the user
-
-  - **Response**
-
-    Return the JWT Token
-
-    ```
-    {
-      "jwtToken": "ak2284ns8Di32......"
-    }
-    ```
-
-### Authentication with Token
-
-- **Scenario 1**
-
-  - **Description**:
-
-    If the token is not provided by the user or an invalid token
-
-  - **Response**
-    - **Status code**
-      ```
-      401
-      ```
-    - **Body**
-      ```
-      Invalid JWT Token
-      ```
-
-- **Scenario 2**
-  After successful verification of token proceed to next middleware or handler
-
-### API 2
-
-#### Path: `/states/`
-
-#### Method: `GET`
-
-#### Description:
-
-Returns a list of all states in the state table
-
-#### Response
-
+Response (success):
+```json
+{
+  "jwtToken": "eyJhbGciOiJIUzI1NiIsIn..."
+}
 ```
+
+---
+
+### API 2 - Get all States
+
+- **GET** `/states/`
+
+Response:
+```json
 [
   {
     "stateId": 1,
     "stateName": "Andaman and Nicobar Islands",
     "population": 380581
   },
-
   ...
 ]
 ```
 
-### API 3
+---
 
-#### Path: `/states/:stateId/`
+### API 3 - Get State by ID
 
-#### Method: `GET`
+- **GET** `/states/:stateId/`
 
-#### Description:
+---
 
-Returns a state based on the state ID
+### API 4 - Add District
 
-#### Response
+- **POST** `/districts/`
 
-```
-{
-  "stateId": 8,
-  "stateName": "Delhi",
-  "population": 16787941
-}
-```
-
-### API 4
-
-#### Path: `/districts/`
-
-#### Method: `POST`
-
-#### Description:
-
-Create a district in the district table, `district_id` is auto-incremented
-
-#### Request
-
-```
+Request:
+```json
 {
   "districtName": "Bagalkot",
   "stateId": 3,
@@ -188,66 +165,28 @@ Create a district in the district table, `district_id` is auto-incremented
 }
 ```
 
-#### Response
+Response: `District Successfully Added`
 
-```
-District Successfully Added
-```
+---
 
-### API 5
+### API 5 - Get District by ID
 
-#### Path: `/districts/:districtId/`
+- **GET** `/districts/:districtId/`
 
-#### Method: `GET`
+---
 
-#### Description:
+### API 6 - Delete District
 
-Returns a district based on the district ID
+- **DELETE** `/districts/:districtId/`
 
-#### Response
+---
 
-```
-{
-  "districtId": 322,
-  "districtName": "Palakkad",
-  "stateId": 17,
-  "cases": 61558,
-  "cured": 59276,
-  "active": 2095,
-  "deaths": 177
-}
-```
+### API 7 - Update District
 
-### API 6
+- **PUT** `/districts/:districtId/`
 
-#### Path: `/districts/:districtId/`
-
-#### Method: `DELETE`
-
-#### Description:
-
-Deletes a district from the district table based on the district ID
-
-#### Response
-
-```
-District Removed
-
-```
-
-### API 7
-
-#### Path: `/districts/:districtId/`
-
-#### Method: `PUT`
-
-#### Description:
-
-Updates the details of a specific district based on the district ID
-
-#### Request
-
-```
+Request:
+```json
 {
   "districtName": "Nadia",
   "stateId": 3,
@@ -258,40 +197,61 @@ Updates the details of a specific district based on the district ID
 }
 ```
 
-#### Response
+Response: `District Details Updated`
 
-```
+---
 
-District Details Updated
+### API 8 - Get State Statistics
 
-```
+- **GET** `/states/:stateId/stats/`
 
-### API 8
-
-#### Path: `/states/:stateId/stats/`
-
-#### Method: `GET`
-
-#### Description:
-
-Returns the statistics of total cases, cured, active, deaths of a specific state based on state ID
-
-#### Response
-
-```
+Response:
+```json
 {
   "totalCases": 724355,
   "totalCured": 615324,
   "totalActive": 99254,
   "totalDeaths": 9777
 }
-
 ```
 
-<br/>
+---
 
-Use `npm install` to install the packages.
+## 🧪 How to Run Locally
 
-**Export the express instance using the default export syntax.**
+```bash
+git clone https://github.com/Srivardhan005/covidportal.git
+cd covidportal
+npm install
+node app.js
+```
 
-**Use Common JS module syntax.**
+---
+
+## 🧩 Real-World Use Case
+
+This project mimics real healthcare backend systems, such as:
+
+- COVID dashboards
+- State-wise health management portals
+- Admin panels for district-level reporting
+
+---
+
+## 📎 Future Enhancements
+
+- ✅ Add role-based access (Admin vs. User)
+- ✅ Deploy using Render or Railway
+- ✅ Add Swagger API documentation
+- ✅ Write unit tests for route handlers
+
+---
+
+## 🧑‍💻 Author
+
+**Srivardhan**  
+[GitHub](https://github.com/Srivardhan005)
+
+---
+
+> ✨ *“A good backend protects data and enforces rules — this project does both.”*
